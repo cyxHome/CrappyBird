@@ -20,13 +20,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var explosionTextures = [SKTexture]()
     
     var floors = [SKSpriteNode]()
+    var ceil = SKSpriteNode()
+
     
     var pipes = [SKSpriteNode]()
     let pipeSpacing = CGFloat(800)
     
     let BIRD_CAT  : UInt32 = 0x1 << 0
     let FLOOR_CAT : UInt32 = 0x1 << 1
-    let PIPE_CAT  : UInt32 = 0x1 << 2
+    let CEIL_CAT  : UInt32 = 0x1 << 2
+    let TOP_PIPE_CAT  : UInt32 = 0x1 << 3
+    let BOTTOM_PIPE_CAT  : UInt32 = 0x1 << 4
     
     var isRunning = true
     
@@ -41,33 +45,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var passPipeCount = 0
     var button: SKNode! = nil
+    var backToMainButton : SKNode! = nil
     
     var restartLabel : SKLabelNode! = nil
+    var backToMainLabel : SKLabelNode! = nil
     var countLabel : SKLabelNode! = SKLabelNode.init()
     
     var pipeAtRightOfMiddleScreen = [true, true]
     
     
     func didBeginContact(contact: SKPhysicsContact) {
+        if !isRunning {
+            return
+        }
         print("something colided")
         isRunning = false
         
         let explosion = SKAction.animateWithTextures(explosionTextures, timePerFrame: 0.05)
-        
+    
         let removeBird = SKAction.removeFromParent()
         let actionSeq = SKAction.sequence([explosion, removeBird])
-        bird.runAction(actionSeq)
-        
-        restartLabel = SKLabelNode.init()
-        restartLabel.text = "Restart"
-        restartLabel.fontSize = 40
-        button = SKSpriteNode(color: SKColor.brownColor(), size: CGSize(width: 200, height: 100))
-        // Put it in the center of the scene
-        button.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
-        button.addChild(restartLabel)
-        button.zPosition = 1000
-        button.position.y += 50
-        addChild(button)
+        bird.runAction(actionSeq, completion: {
+            self.restartLabel = SKLabelNode.init()
+            self.restartLabel.text = "Restart"
+            self.restartLabel.fontSize = 40
+            self.backToMainLabel = SKLabelNode.init()
+            self.backToMainLabel.text = "Back To Main"
+            self.backToMainLabel.fontSize = 40
+            self.button = SKSpriteNode(color: SKColor.redColor(), size: CGSize(width: 300, height: 100))
+            // Put it in the center of the scene
+            self.button.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+            self.button.addChild(self.restartLabel)
+            self.button.zPosition = 1000
+            self.button.position.y += 100
+            self.addChild(self.button)
+            self.backToMainButton = SKSpriteNode(color: SKColor.brownColor(), size: CGSize(width: 300, height: 100))
+            self.backToMainButton.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+            self.backToMainButton.addChild(self.backToMainLabel)
+            self.backToMainButton.zPosition = 1000
+            self.addChild(self.backToMainButton)
+        })
     }
     
     func randomBetweenNumbers(firstNum: CGFloat, secondNum: CGFloat) -> CGFloat {
@@ -95,8 +112,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bird.physicsBody?.allowsRotation = false
         bird.physicsBody?.restitution = 0.0
         bird.physicsBody?.categoryBitMask = BIRD_CAT
-        bird.physicsBody?.collisionBitMask = FLOOR_CAT | PIPE_CAT
-        bird.physicsBody?.contactTestBitMask = PIPE_CAT
+        bird.physicsBody?.collisionBitMask = FLOOR_CAT | CEIL_CAT | TOP_PIPE_CAT | BOTTOM_PIPE_CAT
+        bird.physicsBody?.contactTestBitMask = TOP_PIPE_CAT | BOTTOM_PIPE_CAT
         
         let particlesPath = NSBundle.mainBundle().pathForResource("MyParticle", ofType: "sks")
         let particles = NSKeyedUnarchiver.unarchiveObjectWithFile(particlesPath!) as!
@@ -129,7 +146,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bottomPipe.position.x = CGFloat(i + 2) * pipeSpacing
             bottomPipe.physicsBody = SKPhysicsBody(texture: bottomPipe.texture!, size: bottomPipe.size)
             bottomPipe.physicsBody?.dynamic = false
-            bottomPipe.physicsBody?.categoryBitMask = FLOOR_CAT
+            bottomPipe.physicsBody?.categoryBitMask = BOTTOM_PIPE_CAT
             bottomPipeY = bottomPipe.position.y
             addChild(bottomPipe)
             pipes.append(bottomPipe)
@@ -143,11 +160,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             topPipe.position.x = CGFloat(i + 2) * pipeSpacing
             topPipe.physicsBody = SKPhysicsBody(texture: topPipe.texture!, size: topPipe.size)
             topPipe.physicsBody?.dynamic = false
-            topPipe.physicsBody?.categoryBitMask = PIPE_CAT
+            topPipe.physicsBody?.categoryBitMask = TOP_PIPE_CAT
             topPipeY = topPipe.position.y
             addChild(topPipe)
             pipes.append(topPipe)
         }
+    }
+    
+    func addFloor() {
+        for i in 0 ..< 3 {
+            let floor = SKSpriteNode(imageNamed: "floor")
+            // more the origin to the bottom left
+            floor.anchorPoint = CGPointZero
+            floor.position = CGPointMake(CGFloat(i) * floor.size.width, 0)
+            
+            var rect = floor.frame
+            rect.origin.x = 0
+            rect.origin.y = 0
+            floor.physicsBody = SKPhysicsBody(edgeLoopFromRect: rect)
+            floor.physicsBody?.dynamic = false
+            floor.physicsBody?.categoryBitMask = FLOOR_CAT
+            
+            floors.append(floor)
+            addChild(floor)
+        }
+    }
+    
+    func addCeil() {
+        ceil.size.width = frame.size.width
+        ceil.size.height = 1
+        ceil.position = CGPoint(x: frame.size.width/2, y: frame.size.height/2)
+        ceil.physicsBody?.categoryBitMask = CEIL_CAT
+        
+        addChild(ceil)
     }
     
     
@@ -169,23 +214,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addBird()
         
         // Floor
-        for i in 0 ..< 3 {
-            let floor = SKSpriteNode(imageNamed: "floor")
-            // more the origin to the bottom left
-            floor.anchorPoint = CGPointZero
-            floor.position = CGPointMake(CGFloat(i) * floor.size.width, 0)
-            
-            var rect = floor.frame
-            rect.origin.x = 0
-            rect.origin.y = 0
-            floor.physicsBody = SKPhysicsBody(edgeLoopFromRect: rect)
-            floor.physicsBody?.dynamic = false
-            floor.physicsBody?.categoryBitMask = FLOOR_CAT
-            
-            floors.append(floor)
-            addChild(floor)
-        }
+        addFloor()
         
+        // Ceil
+        addCeil()
+        
+        // Pipes
         addPipesIntoView()
         
         countLabel.position = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame) + 300)
@@ -203,16 +237,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.locationInNode(self)
             // Check if the location of the touch is within the button's bounds
             if button != nil && button.containsPoint(location) {
-                isRunning = true
-                button.runAction(SKAction.removeFromParent())
-                button = nil
-                addBird()
-                cleanUpPipes()
-                addPipesIntoView()
-                passPipeCount = 0
-                countLabel.text = String(passPipeCount)
+                restart()
+            }
+            else if backToMainButton != nil && backToMainButton.containsPoint(location) {
+                backToMain()
             }
         }
+    }
+    
+    func backToMain() {
+        button.removeFromParent()
+        button = nil
+        backToMainButton.removeFromParent()
+        backToMainButton = nil
+    }
+    
+    func restart() {
+        isRunning = true
+        button.removeFromParent()
+        button = nil
+        backToMainButton.removeFromParent()
+        backToMainButton = nil
+        addBird()
+        cleanUpPipes()
+        addPipesIntoView()
+        passPipeCount = 0
+        countLabel.text = String(passPipeCount)
     }
    
     override func update(currentTime: CFTimeInterval) {
@@ -240,12 +290,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if floor.position.x < -floor.size.width * 0.6 {
                     floor.position.x += 2*floor.size.width
                 }
-                
             }
             
             
             // Move pipes
-            let pipeSpeed = CGFloat(8)
+            let pipeSpeed = CGFloat(5 + Float(passPipeCount) * 0.3)
             for i in 0 ..< 2 {
                 
                 let offset = randomBetweenNumbers(pipeShiftStart, secondNum: pipeShiftEnd)
