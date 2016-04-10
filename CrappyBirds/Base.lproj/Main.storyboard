@@ -311,22 +311,40 @@
                                     <action selector="loginButtonPressed:" destination="QbR-8k-JUF" eventType="touchUpInside" id="W0u-jj-Ian"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t8B-A9-f80">
+                                <rect key="frame" x="279" y="36" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="27F-ox-Ssn">
+                                <rect key="frame" x="279" y="71" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="34d-nR-oYW" firstAttribute="leading" secondItem="dJC-sK-Ec0" secondAttribute="leadingMargin" constant="50" id="2Ms-Yc-Er9"/>
                             <constraint firstItem="Ydr-bT-EhE" firstAttribute="leading" secondItem="dJC-sK-Ec0" secondAttribute="leadingMargin" constant="50" id="AFG-1p-V7c"/>
+                            <constraint firstItem="27F-ox-Ssn" firstAttribute="centerX" secondItem="dJC-sK-Ec0" secondAttribute="centerX" id="Brl-Vu-l4P"/>
+                            <constraint firstItem="t8B-A9-f80" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="16" id="Khe-Hy-crL"/>
                             <constraint firstAttribute="trailingMargin" secondItem="e1v-Db-s07" secondAttribute="trailing" constant="50" id="O0u-6t-DrC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="34d-nR-oYW" secondAttribute="trailing" constant="50" id="TjQ-Xd-s2F"/>
                             <constraint firstItem="e1v-Db-s07" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="95" id="cAN-rP-Bec"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ydr-bT-EhE" secondAttribute="trailing" constant="50" id="iBa-7j-qTc"/>
+                            <constraint firstItem="27F-ox-Ssn" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="51" id="jwH-2M-P5J"/>
                             <constraint firstItem="e1v-Db-s07" firstAttribute="leading" secondItem="dJC-sK-Ec0" secondAttribute="leadingMargin" constant="50" id="l0W-m6-Mza"/>
                             <constraint firstItem="BA7-u5-SoB" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="139" id="n17-my-kQd"/>
+                            <constraint firstItem="t8B-A9-f80" firstAttribute="centerX" secondItem="dJC-sK-Ec0" secondAttribute="centerX" id="tHQ-qv-oQP"/>
                             <constraint firstItem="Ydr-bT-EhE" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="139" id="tSs-DR-Qzu"/>
                             <constraint firstItem="34d-nR-oYW" firstAttribute="top" secondItem="Hiv-sj-wIZ" secondAttribute="bottom" constant="191" id="wdJ-UG-X2G"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="locationLat" destination="t8B-A9-f80" id="KTR-GO-LgU"/>
+                        <outlet property="locationLng" destination="27F-ox-Ssn" id="gek-kQ-pPS"/>
                         <outlet property="loginButton" destination="34d-nR-oYW" id="lgo-eE-KHk"/>
                         <outlet property="password" destination="ZU4-Nj-Vxr" id="tQo-OK-0G7"/>
                         <outlet property="username" destination="lBI-gT-Q8T" id="bcV-y0-8nD"/>

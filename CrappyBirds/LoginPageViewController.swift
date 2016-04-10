@@ -7,11 +7,14 @@
 
 import UIKit
 import RealmSwift
+import MobileCoreServices
 import Firebase
 
 
-class LoginPageViewController: UIViewController {
+class LoginPageViewController: UIViewController, CLLocationManagerDelegate {
 
+    @IBOutlet weak var locationLat: UILabel!
+    @IBOutlet weak var locationLng: UILabel!
     @IBOutlet weak var username: UITextField!
     @IBOutlet weak var password: UITextField!
     @IBOutlet weak var loginButton: UIButton!
@@ -20,8 +23,31 @@ class LoginPageViewController: UIViewController {
     var alert = UIAlertController()
     let accountsRef = Firebase(url: "https://crappybird2049.firebaseio.com/accounts")
     
+    // none sense location
+    var coordinate : CLLocationCoordinate2D?
+    var locationManager: CLLocationManager!
+    
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // wait 10 seconds so the location services can becomes stable.
+        let loc = locations[locations.count-1]
+        coordinate = loc.coordinate
+        let lat = coordinate!.latitude as Double
+        let lng = coordinate!.longitude as Double
+        locationLat.text = "your latitude: \(lat)"
+        locationLng.text = "your longitude: \(lng)"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
+
+        
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "background.png")!)
         username.addTarget(self, action: #selector(LoginPageViewController.checkAndEnableLoginButton), forControlEvents: UIControlEvents.EditingChanged)
         password.addTarget(self, action: #selector(LoginPageViewController.checkAndEnableLoginButton), forControlEvents: UIControlEvents.EditingChanged)

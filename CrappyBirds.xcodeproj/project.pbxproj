@@ -47,6 +47,7 @@
 		12887A4D1C9E1C5F005A962F /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		1288C0E81CB9D4F2002DA3D5 /* menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu.png; sourceTree = "<group>"; };
 		1288C0E91CB9D4F2002DA3D5 /* resume.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = resume.png; sourceTree = "<group>"; };
+		1288C0EC1CB9E80C002DA3D5 /* Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Header.h; sourceTree = "<group>"; };
 		1298EFF91CB943B500A03919 /* RankTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankTableViewController.swift; sourceTree = "<group>"; };
 		1298EFFB1CB9465200A03919 /* MainScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainScreenViewController.swift; sourceTree = "<group>"; };
 		1298EFFD1CB9565C00A03919 /* RankTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankTableViewCell.swift; sourceTree = "<group>"; };
@@ -113,6 +114,7 @@
 				6589D1A71C9DC003008D291D /* GameScene.sks */,
 				6589D1A91C9DC003008D291D /* GameScene.swift */,
 				12F459B91CB6A86300FBF7AC /* LoginPageViewController.swift */,
+				1288C0EC1CB9E80C002DA3D5 /* Header.h */,
 				1298EFFB1CB9465200A03919 /* MainScreenViewController.swift */,
 				1298EFFD1CB9565C00A03919 /* RankTableViewCell.swift */,
 				1298EFF91CB943B500A03919 /* RankTableViewController.swift */,
@@ -409,6 +411,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cs2049.yuxin.CrappyBirds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = CrappyBirds/Header.h;
 			};
 			name = Debug;
 		};
@@ -424,6 +427,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cs2049.yuxin.CrappyBirds;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = CrappyBirds/Header.h;
 			};
 			name = Release;
 		};
