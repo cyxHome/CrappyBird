@@ -3,12 +3,17 @@
 //  CrappyBirds
 //
 //  Created by Daniel Hauagge on 3/19/16.
+//  Modified by caoyuxin
 //  Copyright (c) 2016 Daniel Hauagge. All rights reserved.
 //
 
 import SpriteKit
+import RealmSwift
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
+    
+    // we need to make sure to set this when we create our GameScene
+    var viewController: GameViewController!
     
     var background : SKSpriteNode!
     
@@ -44,11 +49,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let pipeShiftEnd = CGFloat(-200)
     
     var passPipeCount = 0
-    var button: SKNode! = nil
-    var backToMainButton : SKNode! = nil
-    
-    var restartLabel : SKLabelNode! = nil
-    var backToMainLabel : SKLabelNode! = nil
     var countLabel : SKLabelNode! = SKLabelNode.init()
     
     var pipeAtRightOfMiddleScreen = [true, true]
@@ -65,25 +65,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
         let removeBird = SKAction.removeFromParent()
         let actionSeq = SKAction.sequence([explosion, removeBird])
+        
+        addCurrentRecordToRealm()
+        
         bird.runAction(actionSeq, completion: {
-            self.restartLabel = SKLabelNode.init()
-            self.restartLabel.text = "Restart"
-            self.restartLabel.fontSize = 40
-            self.backToMainLabel = SKLabelNode.init()
-            self.backToMainLabel.text = "Back To Main"
-            self.backToMainLabel.fontSize = 40
-            self.button = SKSpriteNode(color: SKColor.redColor(), size: CGSize(width: 300, height: 100))
-            // Put it in the center of the scene
-            self.button.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
-            self.button.addChild(self.restartLabel)
-            self.button.zPosition = 1000
-            self.button.position.y += 100
-            self.addChild(self.button)
-            self.backToMainButton = SKSpriteNode(color: SKColor.brownColor(), size: CGSize(width: 300, height: 100))
-            self.backToMainButton.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
-            self.backToMainButton.addChild(self.backToMainLabel)
-            self.backToMainButton.zPosition = 1000
-            self.addChild(self.backToMainButton)
+            self.viewController.showButtons()
+        })
+    }
+    
+    func addCurrentRecordToRealm() {
+        let realm = try! Realm()
+        let username = realm.objects(Account).first?.username
+        let date = NSDate()
+        let time = date.timeIntervalSince1970
+        let score = passPipeCount
+        let record = Record()
+        record.username = username!
+        record.time = time
+        record.score = score
+        record.setCompoundKeyValue()
+        try! realm.write({
+            realm.add(record)
         })
     }
     
@@ -232,37 +234,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 120))
-        for touch: AnyObject in touches {
-            // Get the location of the touch in this scene
-            let location = touch.locationInNode(self)
-            // Check if the location of the touch is within the button's bounds
-            if button != nil && button.containsPoint(location) {
-                restart()
-            }
-            else if backToMainButton != nil && backToMainButton.containsPoint(location) {
-                backToMain()
-            }
-        }
     }
     
-    func backToMain() {
-        button.removeFromParent()
-        button = nil
-        backToMainButton.removeFromParent()
-        backToMainButton = nil
-    }
     
     func restart() {
-        isRunning = true
-        button.removeFromParent()
-        button = nil
-        backToMainButton.removeFromParent()
-        backToMainButton = nil
         addBird()
         cleanUpPipes()
         addPipesIntoView()
         passPipeCount = 0
         countLabel.text = String(passPipeCount)
+        isRunning = true
     }
    
     override func update(currentTime: CFTimeInterval) {
@@ -320,7 +301,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 // pipe pass the bird from right to left
                 if pipeAtRightOfMiddleScreen[i] && pipes[2*i].position.x < bird.position.x {
                     pipeAtRightOfMiddleScreen[i] = false
-                    passPipeCount++
+                    passPipeCount += 1
                     countLabel.text = String(passPipeCount)
                 }
                 

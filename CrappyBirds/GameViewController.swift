@@ -11,10 +11,16 @@ import SpriteKit
 
 class GameViewController: UIViewController {
 
+    @IBOutlet weak var resumeButton: UIButton!
+    @IBOutlet weak var menuButton: UIButton!
+    
+    let scene = GameScene(fileNamed:"GameScene")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if let scene = GameScene(fileNamed:"GameScene") {
+        hideButtons()
+        
+        if scene != nil {
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
@@ -24,11 +30,34 @@ class GameViewController: UIViewController {
             skView.ignoresSiblingOrder = true
             
             /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
+            scene!.scaleMode = .AspectFill
+            scene!.viewController = self
             
             skView.presentScene(scene)
         }
-        
+    }
+    
+    
+    func showButtons() {
+        resumeButton.hidden = false
+        menuButton.hidden = false
+    }
+    
+    func hideButtons() {
+        resumeButton.hidden = true
+        menuButton.hidden = true
+    }
+    
+    @IBAction func resumeButtonPressed(sender: AnyObject) {
+        hideButtons()
+        scene!.restart()
+    }
+    
+    
+    @IBAction func menuButtonPressed(sender: AnyObject) {
+        hideButtons()
+        let nextViewController = self.storyboard?.instantiateViewControllerWithIdentifier("MainScreenNavigationViewController")
+        presentViewController(nextViewController!, animated: true, completion: nil)
     }
 
     override func shouldAutorotate() -> Bool {

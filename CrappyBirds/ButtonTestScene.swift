@@ -3,7 +3,6 @@
 //  CrappyBirds
 //
 //  Created by caoyuxin on 3/19/16.
-//  Copyright © 2016 Daniel Hauagge. All rights reserved.
 //
 
 import Foundation
